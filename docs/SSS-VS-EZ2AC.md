@@ -17,7 +17,7 @@ That is not an analogy — for the one song where both exist, the halves are
 | Comparison | Result |
 | --- | --- |
 | 3S text header vs EC `.ezi` payload | **byte-identical**, 2725 bytes, 112 keysounds, indices 1..112 |
-| 3S EZFF footer vs EC `.ez` payload | same v6 layout; 64 tracks; identical track names |
+| 3S EZFF footer vs EC `.ez` payload | same v6 layout; 64 tracks; identical track names (Firestorm is the only song in the set whose 3S charts carry track names at all) |
 | note payloads on shared lanes | identical `sound`, `velocity`, `pan`, `length` byte-for-byte |
 
 So the conversion is a split, not a translation. `tools/sss2ez.py` copies both

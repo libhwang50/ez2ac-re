@@ -102,6 +102,27 @@ def apply_transforms(chart, remap=(), shift_notes=0, shift_events=0, retime=Fals
     return chart
 
 
+def set_names(chart, name1=None, name2=None, track_names=None):
+    """Write name strings into the EZFF header and/or individual track headers.
+
+    Both header name fields are 0x40 bytes, NUL padded, and are empty in every
+    shipped chart we have -- including EZ2AC EC's own. The one human-readable
+    label EC does populate is track 0's name (`untitled`).
+    """
+    def enc(s):
+        b = s.encode("latin1")
+        if len(b) > 0x40:
+            raise ValueError("name %r is %d bytes, max 0x40" % (s, len(b)))
+        return b
+    if name1 is not None:
+        chart["header"]["name1"] = enc(name1)
+    if name2 is not None:
+        chart["header"]["name2"] = enc(name2)
+    for idx, s in (track_names or {}).items():
+        chart["tracks"][idx]["name"] = enc(s)
+    return chart
+
+
 def cmd_split(args):
     data = open(args.input, "rb").read()
     ezi_text, ezff, chart = split_sss(data)
@@ -111,8 +132,17 @@ def cmd_split(args):
         remap.append((int(a), int(b)))
     shift_notes = args.shift_notes
     shift_events = args.shift_events
-    if remap or shift_notes or shift_events or args.retime:
+    track_names = {}
+    title = args.title
+    if title is not None:
+        track_names[0] = title
+    for spec in args.track_name:
+        idx, _, s = spec.partition(":")
+        track_names[int(idx)] = s
+    if remap or shift_notes or shift_events or args.retime or track_names \
+            or args.name1 is not None or args.name2 is not None:
         chart = apply_transforms(chart, remap, shift_notes, shift_events, args.retime)
+        set_names(chart, args.name1, args.name2, track_names)
         ezff = build_ezff(chart)
         if args.rebuild_ezi:
             ezi_text = build_ezi(parse_ezi(ezi_text))
@@ -142,6 +172,13 @@ def cmd_split(args):
         print("  shifted notes %d ticks (%.4f measures)" % (shift_notes, shift_notes / h["ticks_per_measure"]))
     if shift_events:
         print("  shifted control events %d ticks" % shift_events)
+    if args.name1 is not None or args.name2 is not None or track_names:
+        if args.name1 is not None:
+            print("  header name1 -> %r" % args.name1)
+        if args.name2 is not None:
+            print("  header name2 -> %r" % args.name2)
+        for idx in sorted(track_names):
+            print("  track %d name -> %r" % (idx, track_names[idx]))
     print("  -> %s  (%d bytes%s)" % (ez_path, len(ezff), ", EC container" if args.ec else ""))
     print("  -> %s (%d bytes%s)" % (ezi_path, len(ezi_text), ", EC container" if args.ec else ""))
 
@@ -209,6 +246,14 @@ def main(argv=None):
                    help="recompute total_ticks and duration from the notes")
     s.add_argument("--rebuild-ezi", action="store_true",
                    help="re-serialise the keysound table instead of copying it verbatim")
+    s.add_argument("--name1", metavar="STR",
+                   help="write the 0x40 header name field at offset 0x06")
+    s.add_argument("--name2", metavar="STR",
+                   help="write the 0x40 header name field at offset 0x46")
+    s.add_argument("--track-name", dest="track_name", action="append", default=[],
+                   metavar="IDX:STR", help="write a track's name field (repeatable)")
+    s.add_argument("--title", metavar="STR",
+                   help="shorthand for --track-name 0:STR (the label EC actually uses)")
     s.set_defaults(func=cmd_split)
 
     c = sub.add_parser("combine", help=".ez + .ezi -> .sss")

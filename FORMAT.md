@@ -119,11 +119,38 @@ The names in the shipped charts are:
 | 22–31 | `BG 1` … `BG 10` |
 | 32–40 | unnamed, but carry notes |
 
-These are **identical to the names inside 3S `.sss` charts** — 3S inherited
-them wholesale. Note they are authoring labels, not the runtime lane semantics
-`ez2stuff` tabulates for v6 (where slots 8, 9, 12, 13 are Effector 1–4). The
-names and that table disagree, and the names are what the files actually
-contain.
+These are **the same names the 3S `.sss` charts carry for the same song** — 3S
+inherited them wholesale. Note they are authoring labels, not the runtime lane
+semantics `ez2stuff` tabulates for v6 (where slots 8, 9, 12, 13 are Effector
+1–4). The names and that table disagree, and the names are what the files
+actually contain.
+
+Track names are **optional and inconsistently applied**. EC's own three
+Firestorm charts name 32 of 64 slots. Of the 36 3S charts examined, only the
+nine Firestorm ones name anything at all — the other 27 leave every track name
+field empty. So never key on a name; key on the slot index.
+
+### Name fields, and writing them
+
+There are three places a name string can live, and EC populates only the third:
+
+| Field | Offset | Size | In EC's shipped charts |
+| --- | ---: | ---: | --- |
+| header `name1` | `0x06` | 0x40 | empty |
+| header `name2` | `0x46` | 0x40 | empty |
+| track 0 `name` | `0x96+0x06` | 0x40 | `untitled` |
+
+So the only human-readable label EC itself writes is track 0's name, and the
+header name fields are dead weight in every file we have. `tools/sss2ez.py`
+will write any of them:
+
+```sh
+python3 tools/sss2ez.py x.sss --title untitled --name1 kamui \
+    --track-name 1:Dummy --track-name 2:Dummy2
+```
+
+`--title STR` is shorthand for `--track-name 0:STR`. Writing names does not
+change the file length, and the result still parses and round-trips.
 
 ## 3. `.ezi` — the keysound table
 

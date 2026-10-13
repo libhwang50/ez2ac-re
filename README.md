@@ -52,6 +52,11 @@ python3 tools/sss2ez.py split x.sss -o out/ --ec
 # normalise a 3S chart to EC's own layout
 python3 tools/sss2ez.py split x.sss -o out/ --remap 8:10 --shift-notes -192 --retime
 
+# write name strings (most 3S charts carry none; EC's own charts leave the
+# header name fields empty and only label track 0 as `untitled`)
+python3 tools/sss2ez.py split x.sss -o out/ --title untitled --name1 kamui \
+    --track-name 1:Dummy --track-name 2:Dummy2
+
 # prove the split is lossless
 python3 tools/sss2ez.py combine out/x.ez out/x.ezi -o back.sss && cmp back.sss x.sss
 
