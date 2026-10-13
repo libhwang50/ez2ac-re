@@ -102,6 +102,20 @@ def apply_transforms(chart, remap=(), shift_notes=0, shift_events=0, retime=Fals
     return chart
 
 
+# EC's own authoring template, recovered from streetmix1p-firestorm*.ez: exactly
+# slots 0..31 are named, 32..63 are not. Applying it makes a nameless chart look
+# like an EC-authored one.
+EC_TRACK_NAMES = (
+    ["untitled", "Dummy", "Dummy2"]
+    + ["(1P)Line %d" % i for i in range(1, 8)]
+    + ["(1P)Scratch", "(1P)Pedal"]
+    + ["(2P)Line %d" % i for i in range(1, 8)]
+    + ["(2P)Scratch", "(2P)Pedal"]
+    + ["Lights"]
+    + ["BG %d" % i for i in range(1, 11)]
+)
+
+
 def set_names(chart, name1=None, name2=None, track_names=None):
     """Write name strings into the EZFF header and/or individual track headers.
 
@@ -133,6 +147,9 @@ def cmd_split(args):
     shift_notes = args.shift_notes
     shift_events = args.shift_events
     track_names = {}
+    if args.ec_names:
+        for idx, s in enumerate(EC_TRACK_NAMES):
+            track_names[idx] = s
     title = args.title
     if title is not None:
         track_names[0] = title
@@ -140,7 +157,7 @@ def cmd_split(args):
         idx, _, s = spec.partition(":")
         track_names[int(idx)] = s
     if remap or shift_notes or shift_events or args.retime or track_names \
-            or args.name1 is not None or args.name2 is not None:
+            or args.name1 is not None or args.name2 is not None or args.ec_names:
         chart = apply_transforms(chart, remap, shift_notes, shift_events, args.retime)
         set_names(chart, args.name1, args.name2, track_names)
         ezff = build_ezff(chart)
@@ -254,6 +271,9 @@ def main(argv=None):
                    metavar="IDX:STR", help="write a track's name field (repeatable)")
     s.add_argument("--title", metavar="STR",
                    help="shorthand for --track-name 0:STR (the label EC actually uses)")
+    s.add_argument("--ec-names", action="store_true",
+                   help="fill EC's authoring template into slots 0..31 "
+                        "(untitled / Dummy / Dummy2 / (1P)Line 1-7 / ... / BG 1-10)")
     s.set_defaults(func=cmd_split)
 
     c = sub.add_parser("combine", help=".ez + .ezi -> .sss")

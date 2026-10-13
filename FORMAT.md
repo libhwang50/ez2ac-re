@@ -149,8 +149,13 @@ python3 tools/sss2ez.py x.sss --title untitled --name1 kamui \
     --track-name 1:Dummy --track-name 2:Dummy2
 ```
 
-`--title STR` is shorthand for `--track-name 0:STR`. Writing names does not
-change the file length, and the result still parses and round-trips.
+`--title STR` is shorthand for `--track-name 0:STR`. `--ec-names` fills in EC's
+own authoring template — `untitled`, `Dummy`, `Dummy2`, `(1P)Line 1..7`,
+`(1P)Scratch`, `(1P)Pedal`, `(2P)Line 1..7`, `(2P)Scratch`, `(2P)Pedal`,
+`Lights`, `BG 1..10` — into slots 0..31, leaving 32..63 unnamed. Applied to a
+nameless chart it reproduces the track-name fields of
+`streetmix1p-firestorm.ez` 64/64 byte-exactly. Writing names never changes the
+file length, and the result still parses and round-trips.
 
 ## 3. `.ezi` — the keysound table
 

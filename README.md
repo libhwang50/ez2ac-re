@@ -57,6 +57,9 @@ python3 tools/sss2ez.py split x.sss -o out/ --remap 8:10 --shift-notes -192 --re
 python3 tools/sss2ez.py split x.sss -o out/ --title untitled --name1 kamui \
     --track-name 1:Dummy --track-name 2:Dummy2
 
+# or just fill EC's own slot-name template (slots 0..31) into a nameless chart
+python3 tools/sss2ez.py split x.sss -o out/ --ec-names
+
 # prove the split is lossless
 python3 tools/sss2ez.py combine out/x.ez out/x.ezi -o back.sss && cmp back.sss x.sss
 
