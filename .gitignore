@@ -1,0 +1,21 @@
+# never track game content or executables
+*.exe
+*.dll
+*.7z
+*.zip
+*.wav
+*.mp3
+*.ogg
+# EZ2AC / 3S data files
+*.ez
+*.ezi
+*.ezz
+*.sss
+*.ini
+*.dat
+*.str
+# local
+__pycache__/
+.venv/
+out/
+rendered/
