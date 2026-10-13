@@ -60,6 +60,10 @@ python3 tools/sss2ez.py split x.sss -o out/ --title untitled --name1 kamui \
 # or just fill EC's own slot-name template (slots 0..31) into a nameless chart
 python3 tools/sss2ez.py split x.sss -o out/ --ec-names
 
+# fold a 3S Percussion-mode chart onto EZ2AC's 5K + scratch lanes
+python3 tools/sss2ez.py split kamui_3h.sss -o out/ --remap 8:10 --remap 9:3 \
+    --remap 10:4 --remap 17:5 --remap 18:6 --remap 19:7
+
 # prove the split is lossless
 python3 tools/sss2ez.py combine out/x.ez out/x.ezi -o back.sss && cmp back.sss x.sss
 

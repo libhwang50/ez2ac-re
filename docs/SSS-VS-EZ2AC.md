@@ -65,6 +65,49 @@ the names actually stored in EC's and 3S's charts put `(1P)Line 6` at slot 8 and
 `(1P)Scratch` at slot 10. The two disagree, and the files are the primary
 source.
 
+## Converting Percussion mode to EZ2AC 5K + scratch
+
+3S Percussion mode uses slots `8,9,10` (1P) and `17,18,19` (2P) — six lanes,
+three per side. EZ2AC's own playable set, read straight out of EC's shipped
+charts, is slots `3,4,5,6,7` (five keys) + `10` (scratch) + `11` (pedal); slots
+8, 9 and 12–20 are unused there. So the fold is:
+
+```sh
+python3 tools/sss2ez.py split kamui_3h.sss -o out/ \
+    --remap 8:10 --remap 9:3 --remap 10:4 \
+    --remap 17:5 --remap 18:6 --remap 19:7
+```
+
+Leftmost percussion lane (8) becomes scratch; the other five become the key row.
+Verified across all 11 type-3 charts in this set: note counts are exactly
+conserved and every chart lands on `{3,4,5,6,7,10}`, with `Eraser_3or` keeping
+its single pedal note on slot 11 — which is a valid EZ2AC lane.
+
+`--remap` is a **simultaneous permutation**, not a sequence of moves. That
+matters here because slot 10 is both a source (`10:4`) and a destination
+(`8:10`). A sequential implementation applied in argument order would move
+slot 8's notes into 10, then carry them along `10:4`, and produce a chart with
+an empty scratch lane and a doubled key 2 — same total note count, silently
+wrong. Order of the `--remap` flags is now irrelevant.
+
+Two things not to do:
+
+* **Do not add `--shift-notes -192`.** That one-measure offset is specific to
+  Firestorm, which 3S ported from EZ2AC. kamui, bleed and Eraser charts are
+  native 3S authoring and need no shift.
+* **Do not drop the BG slots.** Slots 22+ carry the melody and the bed sample;
+  they are what makes the song audible. The remap only touches playable lanes.
+
+`firestorm_3h` and `firestorm_3n` already have notes on slots 3–7, so the fold
+merges two lanes onto one destination. The tool reports it, e.g.
+`lane 3 <- 9 (+55 notes already on the destination)`.
+
+Which physical button slot 8 is remains the one soft spot. `DAT_004c34f0` gives
+six lanes for Percussion mode, which selects the lane-map row `8 9 10 17 18 19`
+— leftmost first — but the branch that picks among the four variant tables is
+still unresolved, so confirm the left-to-right order by ear on one chart before
+batch-converting.
+
 ## Converting in practice
 
 ```sh

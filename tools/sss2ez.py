@@ -88,11 +88,19 @@ def apply_transforms(chart, remap=(), shift_notes=0, shift_events=0, retime=Fals
                 raw = bytes(nb)
             new.append(raw)
         t["notes"] = new
-    for src, dst in remap:
-        s = chart["tracks"][src]
-        d = chart["tracks"][dst]
-        d["notes"] = sorted(d["notes"] + s["notes"], key=lambda r: struct.unpack_from("<I", r, 0)[0])
-        s["notes"] = []
+    # Remap is a simultaneous permutation, not a sequence of moves: every track's
+    # final content is the union of the original contents of all tracks that map
+    # to it. A sequential implementation would cascade -- with both 8:10 and 10:4
+    # present, applying 8:10 first would then carry slot 8's notes along 10:4 and
+    # silently lose them.
+    if remap:
+        m = dict(remap)
+        final = {}
+        for t in chart["tracks"]:
+            final.setdefault(m.get(t["index"], t["index"]), []).extend(t["notes"])
+        for t in chart["tracks"]:
+            t["notes"] = sorted(final.get(t["index"], []),
+                                key=lambda r: struct.unpack_from("<I", r, 0)[0])
     h = chart["header"]
     if retime:
         used = [struct.unpack_from("<I", n, 0)[0] for t in chart["tracks"] for n in t["notes"]]
@@ -158,6 +166,7 @@ def cmd_split(args):
         track_names[int(idx)] = s
     if remap or shift_notes or shift_events or args.retime or track_names \
             or args.name1 is not None or args.name2 is not None or args.ec_names:
+        pre_counts = {t["index"]: len(t["notes"]) for t in chart["tracks"]}
         chart = apply_transforms(chart, remap, shift_notes, shift_events, args.retime)
         set_names(chart, args.name1, args.name2, track_names)
         ezff = build_ezff(chart)
@@ -184,7 +193,22 @@ def cmd_split(args):
           % (keysounds if keysounds >= 0 else "(wrapped)",
              sum(len(t["notes"]) for t in chart["tracks"])))
     if remap:
-        print("  remapped lanes: %s" % ", ".join("%d->%d" % r for r in remap))
+        dests = {d for _, d in remap}
+        merged = {}
+        for src, dst in remap:
+            merged.setdefault(dst, []).append(src)
+        for dst, ss in sorted(merged.items()):
+            pre = pre_counts.get(dst, 0) if dst not in {s for s, _ in remap} else 0
+            extra = " (+%d notes already on the destination)" % pre if pre else ""
+            print("  lane %d <- %s%s" % (dst, ", ".join(str(s) for s in sorted(ss)), extra))
+        emptied = sorted(s for s, d in remap if s not in dests)
+        if emptied:
+            print("  lanes emptied: %s" % ", ".join(str(s) for s in emptied))
+        both = sorted(s for s, d in remap if s in dests)
+        if both:
+            print("  %s is/are both a source and a destination; the remap is a "
+                  "simultaneous permutation, so argument order does not matter"
+                  % ", ".join(str(b) for b in both))
     if shift_notes:
         print("  shifted notes %d ticks (%.4f measures)" % (shift_notes, shift_notes / h["ticks_per_measure"]))
     if shift_events:
