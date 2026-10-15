@@ -34,6 +34,7 @@ flagged inline in the docs.
 | Slot names and lane map | names read from the file; lane map extracted from the exe |
 | Song audio renderer | working; onset alignment verified at lag 0 ms |
 | `.rnk` high-score files | partially characterised |
+| 3S PNG artwork (skins, UI, flare frames) | solved; 256-byte coverage with the chart key; 116/116 chunk-CRC verified |
 | `.3s` container | **not found on disk** (referenced by the loader) |
 
 ### EZ2AC — Endless Circulation and FINAL EX
@@ -63,6 +64,7 @@ docs/3s/TAXONOMY.md       filename grammar, difficulty ladder, chart types
 docs/3s/LANES.md          what the 64 track slots mean per chart type
 docs/3s/WAV.md            the partial keystream over 3S sample files
 docs/3s/RENDER.md         reconstructing the song audio from a chart
+docs/3s/IMAGES.md         PNG skins/UI: same shape as samples, other key rotation
 docs/3s/REVERSE.md        how the 3S side was recovered
 
 docs/ez2ac/FORMAT.md      EC container codec + EZFF v6 + .ezi + .ini spec
@@ -75,6 +77,7 @@ keys/*.hex.txt            six recovered keystreams (FNEX ez/ezi/ini, EV, NT, AEI
 
 tools/sss.py              3S chart decoder / encoder / round-trip verifier (stdlib)
 tools/wav.py              3S sample de-obfuscator (stdlib)
+tools/png.py              3S PNG artwork de-obfuscator (stdlib)
 tools/render_song.py      3S song renderer (needs numpy + soundfile)
 tools/ez2ac.py            EC codec + EZFF parser/builder + .ezi parser (stdlib)
 tools/sss2ez.py           .sss <-> EC .ez + .ezi converter (stdlib)
@@ -108,6 +111,11 @@ python3 tools/sss.py roundtrip 'path/to/*.sss'
 python3 tools/wav.py info      'path/to/sound/*.wav'
 python3 tools/wav.py decode    path/to/1-kick-02.wav -o kick.wav
 python3 tools/wav.py roundtrip 'path/to/sound/*.wav'
+
+# the PNG skins and UI art are obfuscated the same way but with the chart key,
+# not the sample key: audit first, it writes nothing and checks every chunk CRC
+python3 tools/png.py audit  'path/to/img/skin_data/*.png'
+python3 tools/png.py decode 'path/to/img/skin_data/*.png' -o out/
 
 # there is no BGM file: the song is a render of the chart
 python3 tools/render_song.py path/to/kamui_1n.sss -o kamui_1n.flac

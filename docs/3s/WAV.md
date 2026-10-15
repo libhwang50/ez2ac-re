@@ -83,6 +83,9 @@ rotated key raises total sample-to-sample delta by ~26.9 million units and is
 worse on *every* file, with clicks appearing at precisely the predicted sample
 positions (byte offsets 78/79, 90/91, 108/109, 130/131).
 
+The reverse mistake is equally easy to make with **image** assets, which use the
+*unrotated* chart key over the same 256 bytes: see `docs/3s/IMAGES.md`.
+
 ## Two traps
 
 **The on-disk magic is `WTH]`, not a container format.** `0x57 0x54 0x48 0x5d`
