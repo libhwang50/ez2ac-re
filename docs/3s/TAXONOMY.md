@@ -60,7 +60,7 @@ carried-over slot from the EZ2DJ lineage that 3S barely populated.
 Four pointers to one-character strings at `0x004cd2a8`, indexed by
 `DAT_0091cf30`:
 
-| index | filename char | shipped files | lane set (see `LANES.md`) |
+| index | filename char | shipped files | lane set (see `docs/3s/LANES.md`) |
 | --- | --- | --- | --- |
 | 0 | `3` | 280 | 3 + 3 lanes |
 | 1 | `1` | 391 | 5 keys + 1 + 1 |
@@ -75,7 +75,7 @@ scrapped or unshipped chart type.
 The three shipped types line up with the three difficulty ratings 3S publishes
 per song (Percussion, Arcade, Professional), and with the lane counts observed
 in the charts themselves. Which internal index maps to which named mode is
-inferred, not proven — see `LANES.md`.
+inferred, not proven — see `docs/3s/LANES.md`.
 
 ## Non-base difficulty labels
 

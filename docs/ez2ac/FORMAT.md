@@ -3,7 +3,8 @@
 Everything here was recovered from `EZ2AC.exe` (20,889,600 bytes, PE32 i386)
 and verified against shipped files: three `.ez` charts, one `.ezi`, and
 `EZ2AC.ini`. The codec round-trips all seven byte-for-byte, and the decoded
-`.ez` files parse as clean EZ2AC v6 EZFF.
+`.ez` files parse as clean EZ2AC v6 EZFF. The 3S side of the family is documented
+in `docs/3s/FORMAT.md`; `docs/SSS-VS-EZ2AC.md` compares the two directly.
 
 ## 1. The container codec
 
@@ -20,7 +21,7 @@ use the **same** transform. Decoding:
 is used — the consumer assigns `(char)*(undefined4 *)(...)`. A handful of
 entries exceed `0xff` (`0x1b8`, `0x1f3`, `0x1a7`, `0x1bd`, `0x1ca`, `0x1ec`) and
 their low bytes are what matter. The table is reproduced in
-`docs/ec_keystream.hex.txt` and embedded in `tools/ez2ac.py`.
+`docs/ez2ac/ec_keystream.hex.txt` and embedded in `tools/ez2ac.py`.
 
 Encoding is the exact inverse: undo the span reversal, add `K`, reverse.
 

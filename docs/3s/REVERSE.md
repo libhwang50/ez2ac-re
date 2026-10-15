@@ -133,7 +133,7 @@ keyed within the record set.
 * **Which lane-map variant table applies when.** The four tables in
   `FUN_00406c30` differ by whether the pedal and the three percussion slots are
   included, and one row matches the wiki's Enhanced Arcade lane set exactly —
-  but the outer branch that selects among them is not traced. See `LANES.md`.
+  but the outer branch that selects among them is not traced. See `docs/3s/LANES.md`.
 * **What `length` actually drives.** It is a tick value that never overlaps the
   next note on the same slot, but it demonstrably does not gate playback.
   Judgement or visuals, most likely.
@@ -159,9 +159,9 @@ keyed within the record set.
   slot 11 "scratch". They are stale EZ2DJ authoring labels, not 3S's controls.
 * **The lane map.** `FUN_00406c30` writes `DAT_00921150` from 18-entry per-mode
   tables; `DAT_004c34f0 = {6,7,13}` identifies the row index as the chart type.
-  Extracted rows are tabulated in `LANES.md`.
+  Extracted rows are tabulated in `docs/3s/LANES.md`.
 
-* **`.wav` sample obfuscation** — see `docs/WAV.md`. Found by noticing that
+* **`.wav` sample obfuscation** — see `docs/3s/WAV.md`. Found by noticing that
   bytes 8–15 were *identical across all 577 sample files*: a keystream over a
   constant WAV header. The `WTH]` "magic" is just `RIFF` plus four keystream
   bytes, and the tail of every file was already recognisable 16-bit PCM, which

@@ -138,7 +138,7 @@ Parsing 700 sampled `.ssf` and rebuilding them byte-for-byte reproduced
 ## 5. Why renaming 3S `.wav` files to `.ssf` does not work
 
 A 3S keysound `.wav` is a normal RIFF/WAVE whose **first 0x100 bytes are
-obfuscated** with a fixed 128-byte keystream (see `3s-re/docs/WAV.md`). So a
+obfuscated** with a fixed 128-byte keystream (see `docs/3s/WAV.md`). So a
 renamed 3S file fails for two independent reasons:
 
 1. the bytes are still 3S-obfuscated — the header reads `57 54 48 5d` where

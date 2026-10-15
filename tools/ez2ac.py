@@ -8,7 +8,7 @@ Covers the three file types EC keeps in its obfuscated container form:
   .ini   config / per-song     plain text
 
 All three use the same container codec, recovered from EZ2AC.exe. See
-docs/FORMAT.md for the derivation and docs/REVERSE.md for the functions.
+docs/ez2ac/FORMAT.md for the derivation and docs/ez2ac/REVERSE.md for the functions.
 
     python3 tools/ez2ac.py decode in.ez -o out.ez
     python3 tools/ez2ac.py encode in.ez -o out.ez

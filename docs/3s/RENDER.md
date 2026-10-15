@@ -15,7 +15,7 @@ python3 tools/render_song.py path/to/x.sss --report
 A render is self-contained: the chart carries its own instrument table, the
 `sound` byte indexes it, the table names the `.wav`, and the samples sit next to
 the chart. Samples are partially obfuscated, so they go through `tools/wav.py`
-on the way in — see `docs/WAV.md`.
+on the way in — see `docs/3s/WAV.md`.
 
 ## What has to be right
 
@@ -30,7 +30,7 @@ pairs per chart — so summing every slot does not double the melody.
 `0-BOMB.wav`. The game is Windows and does not care; a case-sensitive lookup
 silently drops them.
 
-**Velocity is dB.** See `FORMAT.md`. Applying `velocity/127` as a linear gain
+**Velocity is dB.** See `docs/3s/FORMAT.md`. Applying `velocity/127` as a linear gain
 puts the 24% of notes below 127 anywhere from 2 to 17 dB too loud, which is what
 makes keysound volumes sound off in a first-pass render. `--linear-vel`
 reproduces the wrong behaviour for A/B.

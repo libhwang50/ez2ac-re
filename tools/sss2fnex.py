@@ -4,7 +4,8 @@ A `.sss` is `[.ezi text][EZFF v6 binary]`. FINAL EX wants the same two halves
 separately, but (a) wrapped in the FNEX container with a per-type keystream,
 (b) EZFF version 8 with 13-byte note records instead of v6's 11, and (c) an
 `.ezi` whose first column is a plain decimal keysound index rather than 3S's
-`C#0`-style note name. FINAL EX also expects keysounds as `.ssf` (see
+`C#0`-style note name. The end-to-end recipe, and what is still open about
+importing a song, is in docs/ez2ac/ADD-A-SONG.md. FINAL EX also expects keysounds as `.ssf` (see
 wav2ssf.py) and populates the header's name1 field with the chart's stem.
 
 Usage:

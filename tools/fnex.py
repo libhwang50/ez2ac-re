@@ -6,6 +6,8 @@ alternating 8/16/8/16... span split -- but it uses a DIFFERENT keystream, and a
 different one per file type. The three FNEX tables were recovered from the
 512-dword array at file offset 0x1818 (VMA 0x403018) inside Kasaski's
 ez2djDecoder binaries in ez2ac-tools/Kasaskis-ez2Tools/FNEX-EncryptTools.
+The format writeup, including the record-magic irregularities in shipped charts,
+is in docs/ez2ac/FINAL-EX.md.
 
 Usage:
   python3 tools/fnex.py info    <file.ez|.ezi|.ini>

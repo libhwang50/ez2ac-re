@@ -68,7 +68,7 @@ EC settles the slot-8 question outright. In `streetmix1p-firestorm.ez` EC puts
 the scratch lane's notes on slot 10 and leaves slot 8 empty; in
 `firestorm_1n.sss` 3S puts the same notes on slot 8 — same song, same keysound
 table, same note payloads byte-for-byte. 3S moved that lane. See
-`ez2ac-re/docs/SSS-VS-EZ2AC.md`.
+`docs/SSS-VS-EZ2AC.md`.
 
 ## The lane map is in the binary after all
 
@@ -154,6 +154,6 @@ energy is concentrated in the lowest frequency band (roughly 10× the mean,
 against a fairly flat mix), i.e. a low-frequency bed/ambience layer. This is the
 same role the `MR` keysound plays in EZ2ON.
 
-They also settle the `length` question — see `FORMAT.md`: Firestorm's 118.6 s
+They also settle the `length` question — see `docs/3s/FORMAT.md`: Firestorm's 118.6 s
 bed is triggered by a note whose `length` is 6 ticks, which would cut it to
 35 ms if `length` gated playback. It does not.

@@ -8,7 +8,7 @@ raw PCM. It is NOT encrypted.
 with a fixed 128-byte keystream (subtract on the way out, add on the way in).
 Renaming a 3S .wav to .ssf produces a file FINAL EX cannot open for two separate
 reasons: the bytes are still obfuscated, and the container is WAV rather than
-.ssf. This tool fixes both.
+.ssf. This tool fixes both. See docs/ez2ac/FINAL-EX.md section 4.
 
 Usage:
   python3 tools/wav2ssf.py convert <in.wav|.ssf dir> -o <outdir> [--to ssf|wav]
