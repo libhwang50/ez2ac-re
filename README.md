@@ -17,6 +17,10 @@ No game content is tracked. Bring your own `EZ2AC.exe` and chart files.
 | `.ini` | same codec, ordinary quoted-key ini once decoded |
 | `.sss` → `.ez` + `.ezi` conversion | **lossless**; 36/36 charts recombine byte-identically |
 | `.sss` → EC-loadable chart | reproduces EC's own Firestorm chart to 2 events out of 2012 |
+| **FINAL EX (FNEX) container codec** | **solved**; three keystreams, one per file type; 1 800/1 800 byte-exact round-trips |
+| FINAL EX `.ez` = EZFF **v8** | parsed; 13-byte notes, u16 keysound index, four record magics |
+| FINAL EX `.ssf` keysound audio | **solved**; 18-byte header + raw PCM, unencrypted; 700/700 rebuild byte-identical |
+| `.sss` → FINAL EX chart, `.wav` → `.ssf` | working end to end — see `docs/ADD-A-SONG.md` |
 | `.es`, `-ez.bin`, `.ezz` on disk | referenced by the loader, not present in the shipped set |
 
 ## Layout
@@ -25,9 +29,15 @@ No game content is tracked. Bring your own `EZ2AC.exe` and chart files.
 FORMAT.md              the file formats and the container codec
 docs/REVERSE.md        how it was recovered: functions, addresses, dead ends
 docs/SSS-VS-EZ2AC.md   what differs between a 3S .sss and an EC .ez/.ezi pair
-docs/ec_keystream.hex.txt  the 512-byte keystream as hex
-tools/ez2ac.py         codec + EZFF parser/builder + .ezi parser (stdlib only)
-tools/sss2ez.py        .sss <-> .ez + .ezi converter (stdlib only)
+docs/ec_keystream.hex.txt  the EC 512-byte keystream as hex
+docs/FINAL-EX.md       FINAL EX: three keystreams, EZFF v8, .ssf, record magics
+docs/ADD-A-SONG.md     recipe for putting a 3S song into FINAL EX, open items
+keys/*.hex.txt         six keystreams (FNEX ez/ezi/ini, EV, NT, AEIC)
+tools/ez2ac.py         EC codec + EZFF parser/builder + .ezi parser (stdlib only)
+tools/sss2ez.py        .sss <-> EC .ez + .ezi converter (stdlib only)
+tools/fnex.py          FINAL EX codec + EZFF v8 + .ssf codec (stdlib only)
+tools/wav2ssf.py       3S .wav <-> FINAL EX .ssf keysound audio (stdlib only)
+tools/sss2fnex.py      .sss -> FINAL EX .ez(v8) + .ezi, and audit (stdlib only)
 ```
 
 ## Usage
@@ -87,6 +97,20 @@ footer is the same v6 structure with the same track slot names. The charts
 themselves differ only by a one-measure note offset, one reassigned lane, two
 duplicate BPM events, and one extra measure of length. See
 `docs/SSS-VS-EZ2AC.md`.
+
+## FINAL EX in one paragraph
+
+FINAL EX reuses EC's *transform* but not its *keystream*, and not just one:
+`.ez`, `.ezi` and `.ini` each get their own 512-byte table, recovered from the
+512-dword array at file offset `0x1818` (VMA `0x403018`) inside Kasaski's
+`ez2djDecoder` binaries in `ez2ac-tools/`. Its `.ez` payload is EZFF **v8**:
+13-byte note records with a **u16** keysound index, which is how FINAL EX's own
+Finite chart addresses 1 131 keysounds where v6 caps at 255. Its keysound audio
+is `.ssf` — an 18-byte header (the WAV `fmt` body with `wFormatTag` dropped, plus
+a PCM byte count) followed by unencrypted raw PCM. Renaming a 3S `.wav` to
+`.ssf` fails twice over: the bytes are still 3S-obfuscated *and* the container is
+WAV. `tools/wav2ssf.py` fixes both in one step. See `docs/FINAL-EX.md`, and
+`docs/ADD-A-SONG.md` for the import recipe.
 
 ## Related
 
