@@ -1,21 +1,43 @@
-# never track game content or executables
+/* never track game content — these games are abandonware but still copyrighted */
+# executables and archives
 *.exe
 *.dll
 *.7z
 *.zip
+
+# audio and video
 *.wav
 *.mp3
 *.ogg
-# EZ2AC / 3S data files
+*.flac
+*.bik
+*.ssf
+
+# game data: charts, keysound manifests, containers, resources
+*.sss
 *.ez
 *.ezi
 *.ezz
-*.sss
 *.ini
 *.dat
 *.str
-# local
-__pycache__/
-.venv/
+*.3s
+*.rnk
+
+# decrypted / generated output
+data/
+game/
+Sabin Sound Star*/
+Endless Circulation/
+plain/
 out/
+*.json
+!package.json
+
+# python
+__pycache__/
+*.pyc
+.venv/
+
+# render output
 rendered/
